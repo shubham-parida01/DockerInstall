@@ -1,842 +1,958 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker on Ubuntu | Step-by-Step Installation Guide</title>
-    <meta name="description" content="A premium, step-by-step guide to installing Docker Engine, CLI, and Desktop on Ubuntu, including PostgreSQL 16.2 setup.">
-    
-    <!-- Modern Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* Color Palette */
-            --bg-deep: #0A0C10;
-            --bg-surface: #10141B;
-            --bg-card: #161B22;
-            --bg-card-hover: #1C2129;
-            --border-muted: #30363D;
-            --border-active: #484F58;
-            
-            --text-primary: #E6EDF3;
-            --text-secondary: #8B949E;
-            --text-tertiary: #6E7681;
-            
-            --docker-blue: #2496ED;
-            --desktop-teal: #30D5C8;
-            --postgres-purple: #336791;
-            
-            --accent-glow: rgba(36, 150, 237, 0.15);
-            
-            --success: #2EA043;
-            --info: #388BFD;
-            --warning: #D29922;
-            
-            /* Spacing & Borders */
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            
-            --sidebar-width: 280px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker on Ubuntu | Step-by-Step Installation Guide</title>
+  <meta name="description"
+    content="A premium, step-by-step guide to installing Docker Engine, CLI, and Desktop on Ubuntu, including PostgreSQL 16.2 setup.">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            scroll-behavior: smooth;
-        }
+  <style>
+    :root {
+      /* Color Palette */
+      --bg-deep: #0A0C10;
+      --bg-surface: #10141B;
+      --bg-card: #161B22;
+      --bg-card-hover: #1C2129;
+      --border-muted: #30363D;
+      --border-active: #484F58;
 
-        /* Layout */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
+      --text-primary: #E6EDF3;
+      --text-secondary: #8B949E;
+      --text-tertiary: #6E7681;
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-surface);
-            border-right: 1px solid var(--border-muted);
-            padding: 2.5rem 1.5rem;
-            position: fixed;
-            height: 100vh;
-            display: none; /* Hidden on small screens */
-        }
+      --docker-blue: #2496ED;
+      --desktop-teal: #30D5C8;
+      --postgres-purple: #336791;
 
-        @media (min-width: 1024px) {
-            .sidebar { display: block; }
-            .content-wrapper { margin-left: var(--sidebar-width); }
-        }
+      --accent-glow: rgba(36, 150, 237, 0.15);
 
-        .nav-list {
-            list-style: none;
-            margin-top: 2rem;
-        }
+      --success: #2EA043;
+      --info: #388BFD;
+      --warning: #D29922;
 
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
+      /* Spacing & Borders */
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 8px;
-            display: block;
-            transition: all 0.2s ease;
-        }
+      --sidebar-width: 280px;
+    }
 
-        .nav-link:hover {
-            color: var(--text-primary);
-            background: var(--bg-card);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .nav-link.active {
-            color: var(--docker-blue);
-            background: rgba(36, 150, 237, 0.1);
-        }
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
 
-        /* Main Content */
-        .content-wrapper {
-            flex: 1;
-            max-width: 100%;
-            padding: 0 1.5rem;
-        }
+    /* Layout */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .guide {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 4rem 0;
-        }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-muted);
+      padding: 2.5rem 1.5rem;
+      position: fixed;
+      height: 100vh;
+      display: none;
+      /* Hidden on small screens */
+    }
 
-        /* Hero Section */
-        .hero {
-            margin-bottom: 4rem;
-            text-align: center;
-        }
+    @media (min-width: 1024px) {
+      .sidebar {
+        display: block;
+      }
 
-        .hero-badge {
-            display: inline-block;
-            background: var(--accent-glow);
-            color: var(--docker-blue);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 99px;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+      .content-wrapper {
+        margin-left: var(--sidebar-width);
+      }
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .nav-list {
+      list-style: none;
+      margin-top: 2rem;
+    }
 
-        .hero-desc {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
 
-        /* Phase Styling */
-        .phase-section {
-            margin-bottom: 5rem;
-            scroll-margin-top: 2rem;
-        }
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: block;
+      transition: all 0.2s ease;
+    }
 
-        .phase-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-muted);
-        }
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
 
-        .phase-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 700;
-        }
+    .nav-link.active {
+      color: var(--docker-blue);
+      background: rgba(36, 150, 237, 0.1);
+    }
 
-        .phase-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+    /* Main Content */
+    .content-wrapper {
+      flex: 1;
+      max-width: 100%;
+      padding: 0 1.5rem;
+    }
 
-        /* Step Card */
-        .step-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-muted);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    .guide {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 0;
+    }
 
-        .step-card:hover {
-            border-color: var(--border-active);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
+    /* Hero Section */
+    .hero {
+      margin-bottom: 4rem;
+      text-align: center;
+    }
 
-        .step-number {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 4rem;
-            font-weight: 900;
-            color: var(--bg-deep);
-            line-height: 0.8;
-            user-select: none;
-            z-index: 0;
-        }
+    .hero-badge {
+      display: inline-block;
+      background: var(--accent-glow);
+      color: var(--docker-blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .step-content {
-            position: relative;
-            z-index: 1;
-        }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .step-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .hero-desc {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-        .step-sub {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
+    /* Phase Styling */
+    .phase-section {
+      margin-bottom: 5rem;
+      scroll-margin-top: 2rem;
+    }
 
-        /* Code Block Enhancement */
-        .code-container {
-            position: relative;
-            margin: 1.5rem 0;
-            border-radius: var(--radius-md);
-            background: #0d1117;
-            border: 1px solid var(--border-muted);
-            overflow: hidden;
-        }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-muted);
+    }
 
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid var(--border-muted);
-        }
+    .phase-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
 
-        .terminal-dots {
-            display: flex;
-            gap: 6px;
-        }
+    .phase-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
 
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
+    /* Step Card */
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-muted);
-            color: var(--text-secondary);
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: var(--font-sans);
-            font-weight: 500;
-        }
+    .step-card:hover {
+      border-color: var(--border-active);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
 
-        .copy-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--text-secondary);
-            background: rgba(255,255,255,0.05);
-        }
+    .step-number {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--bg-deep);
+      line-height: 0.8;
+      user-select: none;
+      z-index: 0;
+    }
 
-        .code-block {
-            padding: 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.7;
-            color: #d1d5db;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+    .step-content {
+      position: relative;
+      z-index: 1;
+    }
 
-        .code-line {
-            display: block;
-        }
+    .step-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .cmd-prefix { color: #ff7b72; margin-right: 8px; user-select: none; }
-        .cmd-sudo { color: #f0883e; }
+    .step-sub {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
 
-        /* Terminal Output Simulation */
-        .ss-box {
-            background: #010409;
-            border: 1px solid var(--border-muted);
-            border-radius: var(--radius-md);
-            margin-top: 1.5rem;
-            overflow: hidden;
-        }
+    /* Code Block Enhancement */
+    .code-container {
+      position: relative;
+      margin: 1.5rem 0;
+      border-radius: var(--radius-md);
+      background: #0d1117;
+      border: 1px solid var(--border-muted);
+      overflow: hidden;
+    }
 
-        .ss-bar {
-            background: #0d1117;
-            padding: 6px 12px;
-            font-size: 11px;
-            color: var(--text-tertiary);
-            border-bottom: 1px solid var(--border-muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-muted);
+    }
 
-        .ss-content {
-            padding: 1rem;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
 
-        /* Callouts */
-        .callout {
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-md);
-            margin: 1.5rem 0;
-            display: flex;
-            gap: 12px;
-            font-size: 14px;
-        }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
 
-        .callout-info {
-            background: rgba(56, 139, 253, 0.1);
-            border: 1px solid rgba(56, 139, 253, 0.3);
-            color: #79c0ff;
-        }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border-muted);
+      color: var(--text-secondary);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
 
-        .callout-success {
-            background: rgba(46, 160, 67, 0.1);
-            border: 1px solid rgba(46, 160, 67, 0.3);
-            color: #7ee787;
-        }
+    .copy-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.05);
+    }
 
-        .callout-icon {
-            flex-shrink: 0;
-            font-style: normal;
-        }
+    .code-block {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: #d1d5db;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
 
-        /* Syntax Color Helpers */
-        .hl-green { color: #7ee787; }
-        .hl-blue { color: #79c0ff; }
-        .hl-amber { color: #d29922; }
-        .hl-purple { color: #d2a8ff; }
-        .hl-gray { color: #8b949e; }
+    .code-line {
+      display: block;
+    }
 
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
+    .cmd-prefix {
+      color: #ff7b72;
+      margin-right: 8px;
+      user-select: none;
+    }
 
-        /* Scroll Progress Bar */
-        #scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: var(--docker-blue);
-            z-index: 9999;
-            transition: width 0.1s ease;
-        }
+    .cmd-sudo {
+      color: #f0883e;
+    }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* Terminal Output Simulation */
+    .ss-box {
+      background: #010409;
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-md);
+      margin-top: 1.5rem;
+      overflow: hidden;
+    }
 
-        .step-card {
-            animation: fadeIn 0.5s ease backwards;
-        }
+    .ss-bar {
+      background: #0d1117;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      border-bottom: 1px solid var(--border-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        /* Add dynamic delay to step cards */
-        .step-card:nth-child(1) { animation-delay: 0.1s; }
-        .step-card:nth-child(2) { animation-delay: 0.2s; }
-        .step-card:nth-child(3) { animation-delay: 0.3s; }
-    </style>
+    .ss-content {
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .callout-info {
+      background: rgba(56, 139, 253, 0.1);
+      border: 1px solid rgba(56, 139, 253, 0.3);
+      color: #79c0ff;
+    }
+
+    .callout-success {
+      background: rgba(46, 160, 67, 0.1);
+      border: 1px solid rgba(46, 160, 67, 0.3);
+      color: #7ee787;
+    }
+
+    .callout-icon {
+      flex-shrink: 0;
+      font-style: normal;
+    }
+
+    /* Syntax Color Helpers */
+    .hl-green {
+      color: #7ee787;
+    }
+
+    .hl-blue {
+      color: #79c0ff;
+    }
+
+    .hl-amber {
+      color: #d29922;
+    }
+
+    .hl-purple {
+      color: #d2a8ff;
+    }
+
+    .hl-gray {
+      color: #8b949e;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Scroll Progress Bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--docker-blue);
+      z-index: 9999;
+      transition: width 0.1s ease;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-card {
+      animation: fadeIn 0.5s ease backwards;
+    }
+
+    /* Add dynamic delay to step cards */
+    .step-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .step-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .step-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="scroll-progress"></div>
+  <div id="scroll-progress"></div>
 
-<div class="app-container">
+  <div class="app-container">
     <aside class="sidebar">
-        <div class="sidebar-logo">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--docker-blue)">
-                <path d="M13.983 11.078h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.12a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259h-2.12a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H8.349a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H5.532a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm8.451-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.12a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259h-2.12a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H8.349a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm5.634-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm0-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zM2.51 9.471h1.761a.243.243 0 01.243.243v6.331a.243.243 0 01-.243.243h-1.76a2.64 2.64 0 01-2.64-2.64V12.11a2.64 2.64 0 012.64-2.64zm20.887 5.253c0 2.946-2.522 5.312-5.617 5.312-1.398 0-2.679-.475-3.69-1.272l-1.636 1.056c-.144.093-.332.062-.44-.075l-.264-.326c-.11-.137-.082-.331.062-.423l1.41-.911a5.61 5.61 0 01-.659-2.361c0-2.946 2.522-5.312 5.617-5.312 3.095 0 5.617 2.366 5.617 5.312z"/>
-            </svg>
+      <div class="sidebar-logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--docker-blue)">
+          <path
+            d="M13.983 11.078h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.12a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259h-2.12a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H8.349a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H5.532a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm8.451-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.12a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259h-2.12a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm-2.817 0h2.119a1.259 1.259 0 011.259 1.259c0 .694-.564 1.259-1.259 1.259H8.349a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm5.634-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zm0-2.817h2.119c.695 0 1.259.564 1.259 1.259 0 .694-.564 1.259-1.259 1.259h-2.119a1.259 1.259 0 01-1.259-1.259c0-.695.564-1.259 1.259-1.259zM2.51 9.471h1.761a.243.243 0 01.243.243v6.331a.243.243 0 01-.243.243h-1.76a2.64 2.64 0 01-2.64-2.64V12.11a2.64 2.64 0 012.64-2.64zm20.887 5.253c0 2.946-2.522 5.312-5.617 5.312-1.398 0-2.679-.475-3.69-1.272l-1.636 1.056c-.144.093-.332.062-.44-.075l-.264-.326c-.11-.137-.082-.331.062-.423l1.41-.911a5.61 5.61 0 01-.659-2.361c0-2.946 2.522-5.312 5.617-5.312 3.095 0 5.617 2.366 5.617 5.312z" />
+        </svg>
+      </div>
+      <nav class="nav-list">
+        <div class="nav-item">
+          <a href="#part-1" class="nav-link active">Part 1: Docker Engine</a>
         </div>
-        <nav class="nav-list">
-            <div class="nav-item">
-                <a href="#part-1" class="nav-link active">Part 1: Docker Engine</a>
-            </div>
-            <div class="nav-item">
-                <a href="#part-2" class="nav-link">Part 2: Docker Desktop</a>
-            </div>
-            <div class="nav-item">
-                <a href="#part-3" class="nav-link">Part 3: PostgreSQL 16.2</a>
-            </div>
-        </nav>
+        <div class="nav-item">
+          <a href="#part-2" class="nav-link">Part 2: Docker Desktop</a>
+        </div>
+        <div class="nav-item">
+          <a href="#part-3" class="nav-link">Part 3: PostgreSQL 16.2</a>
+        </div>
+      </nav>
     </aside>
 
     <main class="content-wrapper">
-        <div class="guide">
-            <header class="hero">
-                <span class="hero-badge">Documentation</span>
-                <h1>Docker on Ubuntu</h1>
-                <p class="hero-desc">Complete step-by-step masterclass for installing Docker Engine, Desktop, and running Postgres in containers.</p>
-            </header>
+      <div class="guide">
+        <header class="hero">
+          <span class="hero-badge">Documentation</span>
+          <h1>Docker on Ubuntu</h1>
+          <p class="hero-desc">Complete step-by-step masterclass for installing Docker Engine, Desktop, and running
+            Postgres in containers.</p>
+        </header>
 
-            <section id="part-1" class="phase-section">
-                <div class="phase-header">
-                    <div class="phase-icon" style="background: rgba(36, 150, 237, 0.15); color: var(--docker-blue);">1</div>
-                    <h2 class="phase-title">Docker Engine + CLI</h2>
-                </div>
+        <section id="part-1" class="phase-section">
+          <div class="phase-header">
+            <div class="phase-icon" style="background: rgba(36, 150, 237, 0.15); color: var(--docker-blue);">1</div>
+            <h2 class="phase-title">Docker Engine + CLI</h2>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">01</div>
-                    <div class="step-content">
-                        <div class="step-label">Remove conflicting packages</div>
-                        <div class="step-sub">Purge old unofficial Docker distributions to ensure a clean slate.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots">
-                                    <div class="dot" style="background: #ff5f56;"></div>
-                                    <div class="dot" style="background: #ffbd2e;"></div>
-                                    <div class="dot" style="background: #27c93f;"></div>
-                                </div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block" id="cmd-1">sudo apt remove docker.io docker-compose docker-compose-v2 \
-    docker-doc podman-docker containerd runc 2>/dev/null; echo done</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Terminal Output</div>
-                            <div class="ss-content">
-                                <span class="hl-gray">Reading package lists... Done</span><br>
-                                <span class="hl-green">done</span>
-                            </div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-content">
+              <div class="step-label">Remove conflicting packages</div>
+              <div class="step-sub">Purge old unofficial Docker distributions to ensure a clean slate.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block" id="cmd-1">sudo apt remove docker.io docker-compose docker-compose-v2 \
+                  docker-doc podman-docker containerd runc 2>/dev/null; echo done</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Terminal Output</div>
+                <div class="ss-content">
+                  <span class="hl-gray">Reading package lists... Done</span><br>
+                  <span class="hl-green">done</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">02</div>
-                    <div class="step-content">
-                        <div class="step-label">Setup Docker Repository</div>
-                        <div class="step-sub">Import official GPG keys and configure the stable repository.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">sudo apt update && sudo apt install -y ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update</div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-content">
+              <div class="step-label">Setup Docker Repository</div>
+              <div class="step-sub">Import official GPG keys and configure the stable repository.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block">sudo apt update && sudo apt install -y ca-certificates curl
+                  sudo install -m 0755 -d /etc/apt/keyrings
+                  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+                  sudo chmod a+r /etc/apt/keyrings/docker.asc
+                  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc]
+                  https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+                  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                  sudo apt update</div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">03</div>
-                    <div class="step-content">
-                        <div class="step-label">Install Docker Packages</div>
-                        <div class="step-sub">Fetch the latest stable Docker Engine, CLI, and plugins.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Terminal Output</div>
-                            <div class="ss-content">
-                                <span class="hl-blue">Setting up docker-ce (5:28.x.x~ubuntu...) ...</span><br>
-                                <span class="hl-green">Created symlink ... docker.service</span>
-                            </div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-content">
+              <div class="step-label">Install Docker Packages</div>
+              <div class="step-sub">Fetch the latest stable Docker Engine, CLI, and plugins.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block">sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+                </div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Terminal Output</div>
+                <div class="ss-content">
+                  <span class="hl-blue">Setting up docker-ce (5:28.x.x~ubuntu...) ...</span><br>
+                  <span class="hl-green">Created symlink ... docker.service</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">04</div>
-                    <div class="step-content">
-                        <div class="step-label">Verify Engine Status</div>
-                        <div class="step-sub">Ensure the background service is active and running.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">sudo systemctl status docker</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Systemd Status</div>
-                            <div class="ss-content">
-                                <span class="hl-gray">● docker.service - Docker Application Container Engine</span><br>
-                                <span class="hl-gray">&nbsp;&nbsp;Loaded: loaded (/lib/systemd/system/docker.service; enabled)</span><br>
-                                <span class="hl-green">&nbsp;&nbsp;Active: active (running) since ...</span>
-                            </div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">04</div>
+            <div class="step-content">
+              <div class="step-label">Verify Engine Status</div>
+              <div class="step-sub">Ensure the background service is active and running.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block">sudo systemctl status docker</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Systemd Status</div>
+                <div class="ss-content">
+                  <span class="hl-gray">● docker.service - Docker Application Container Engine</span><br>
+                  <span class="hl-gray">&nbsp;&nbsp;Loaded: loaded (/lib/systemd/system/docker.service;
+                    enabled)</span><br>
+                  <span class="hl-green">&nbsp;&nbsp;Active: active (running) since ...</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">05</div>
-                    <div class="step-content">
-                        <div class="step-label">Post-Installation Steps</div>
-                        <div class="step-sub">Enable non-sudo access to Docker for a better experience.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">sudo usermod -aG docker $USER && newgrp docker</div>
-                        </div>
-                        <div class="callout callout-info">
-                            <i class="callout-icon">💡</i>
-                            <div>After running this, your current terminal session picks up the new group. No logout required in most cases.</div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">05</div>
+            <div class="step-content">
+              <div class="step-label">Post-Installation Steps</div>
+              <div class="step-sub">Enable non-sudo access to Docker for a better experience.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                
-                <div class="step-card">
-                    <div class="step-number">06</div>
-                    <div class="step-content">
-                        <div class="step-label">Hello World Deployment</div>
-                        <div class="step-sub">Final confirmation that everything is connected correctly.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker --version && docker run hello-world</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Final Verification</div>
-                            <div class="ss-content">
-                                <span class="hl-blue">Docker version 28.x.x, build xxxxxxx</span><br>
-                                <span class="hl-green">Hello from Docker!</span><br>
-                                <span class="hl-gray">This message shows that your installation appears to be working correctly.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <div class="code-block">sudo usermod -aG docker $USER && newgrp docker</div>
+              </div>
+              <div class="callout callout-info">
+                <i class="callout-icon">💡</i>
+                <div>After running this, your current terminal session picks up the new group. No logout required in
+                  most cases.</div>
+              </div>
+            </div>
+          </div>
 
-            <section id="part-2" class="phase-section">
-                <div class="phase-header">
-                    <div class="phase-icon" style="background: rgba(48, 213, 200, 0.15); color: var(--desktop-teal);">2</div>
-                    <h2 class="phase-title">Docker Desktop (GUI)</h2>
+          <div class="step-card">
+            <div class="step-number">06</div>
+            <div class="step-content">
+              <div class="step-label">Hello World Deployment</div>
+              <div class="step-sub">Final confirmation that everything is connected correctly.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-number">07</div>
-                    <div class="step-content">
-                        <div class="step-label">Check KVM Support</div>
-                        <div class="step-sub">Verify virtualization support required for Desktop acceleration.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">kvm-ok</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">KVM Status</div>
-                            <div class="ss-content">
-                                <span class="hl-green">INFO: /dev/kvm exists</span><br>
-                                <span class="hl-green">KVM acceleration can be used</span>
-                            </div>
-                        </div>
-                        <div class="callout callout-info">
-                            <i class="callout-icon">💡</i>
-                            <div>If not found: <code>sudo apt install -y cpu-checker</code></div>
-                        </div>
-                    </div>
+                <div class="code-block">docker --version && docker run hello-world</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Final Verification</div>
+                <div class="ss-content">
+                  <span class="hl-blue">Docker version 28.x.x, build xxxxxxx</span><br>
+                  <span class="hl-green">Hello from Docker!</span><br>
+                  <span class="hl-gray">This message shows that your installation appears to be working
+                    correctly.</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                <div class="step-card">
-                    <div class="step-number">08</div>
-                    <div class="step-content">
-                        <div class="step-label">Download .deb Package</div>
-                        <div class="step-sub">Fetch the latest desktop binary from the official site.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb</div>
-                        </div>
-                    </div>
+        <section id="part-2" class="phase-section">
+          <div class="phase-header">
+            <div class="phase-icon" style="background: rgba(48, 213, 200, 0.15); color: var(--desktop-teal);">2</div>
+            <h2 class="phase-title">Docker Desktop (GUI)</h2>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">07</div>
+            <div class="step-content">
+              <div class="step-label">Check KVM Support</div>
+              <div class="step-sub">Verify virtualization support required for Desktop acceleration.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-number">09</div>
-                    <div class="step-content">
-                        <div class="step-label">Install Package</div>
-                        <div class="step-sub">Install the GUI application and its dependencies.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">sudo apt install ./docker-desktop-amd64.deb</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Apt Message</div>
-                            <div class="ss-content">
-                                <span class="hl-amber">N: Download is performed unsandboxed as root ...</span><br>
-                                <span class="hl-gray">(This warning is harmless and cosmetic)</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="code-block">kvm-ok</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">KVM Status</div>
+                <div class="ss-content">
+                  <span class="hl-green">INFO: /dev/kvm exists</span><br>
+                  <span class="hl-green">KVM acceleration can be used</span>
                 </div>
+              </div>
+              <div class="callout callout-info">
+                <i class="callout-icon">💡</i>
+                <div>If not found: <code>sudo apt install -y cpu-checker</code></div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">10</div>
-                    <div class="step-content">
-                        <div class="step-label">Launch Desktop</div>
-                        <div class="step-sub">Trigger the user-space service for Docker Desktop.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">systemctl --user start docker-desktop</div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">08</div>
+            <div class="step-content">
+              <div class="step-label">Download .deb Package</div>
+              <div class="step-sub">Fetch the latest desktop binary from the official site.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block">wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb</div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">11</div>
-                    <div class="step-content">
-                        <div class="step-label">Unified Verification</div>
-                        <div class="step-sub">Confirm that both Desktop and Engine are synchronized.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker compose version && docker version</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Combined Info</div>
-                            <div class="ss-content">
-                                <span class="hl-green">Docker Compose version v2.x.x</span><br>
-                                <span class="hl-blue">Client: Docker Engine - Community</span><br>
-                                <span class="hl-blue">Server: Docker Desktop</span>
-                            </div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">09</div>
+            <div class="step-content">
+              <div class="step-label">Install Package</div>
+              <div class="step-sub">Install the GUI application and its dependencies.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-            </section>
-
-            <section id="part-3" class="phase-section">
-                <div class="phase-header">
-                    <div class="phase-icon" style="background: rgba(51, 103, 145, 0.15); color: var(--postgres-purple);">3</div>
-                    <h2 class="phase-title">PostgreSQL 16.2</h2>
+                <div class="code-block">sudo apt install ./docker-desktop-amd64.deb</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Apt Message</div>
+                <div class="ss-content">
+                  <span class="hl-amber">N: Download is performed unsandboxed as root ...</span><br>
+                  <span class="hl-gray">(This warning is harmless and cosmetic)</span>
                 </div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">12</div>
-                    <div class="step-content">
-                        <div class="step-label">Pull Postgres Image</div>
-                        <div class="step-sub">Download the official Docker image for Postgres 16.2.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker pull postgres:16.2</div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">10</div>
+            <div class="step-content">
+              <div class="step-label">Launch Desktop</div>
+              <div class="step-sub">Trigger the user-space service for Docker Desktop.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
+                <div class="code-block">systemctl --user start docker-desktop</div>
+              </div>
+            </div>
+          </div>
 
-                <div class="step-card">
-                    <div class="step-number">13</div>
-                    <div class="step-content">
-                        <div class="step-label">Spin up the Container</div>
-                        <div class="step-sub">Launch Postgres with persistence, custom creds, and port mapping.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker run -d \
-  --name pg16 \
-  -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=secret \
-  -e POSTGRES_DB=mydb \
-  -p 5432:5432 \
-  -v pgdata:/var/lib/postgresql/data \
-  postgres:16.2</div>
-                        </div>
-                    </div>
+          <div class="step-card">
+            <div class="step-number">11</div>
+            <div class="step-content">
+              <div class="step-label">Unified Verification</div>
+              <div class="step-sub">Confirm that both Desktop and Engine are synchronized.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-
-                <div class="step-card">
-                    <div class="step-number">14</div>
-                    <div class="step-content">
-                        <div class="step-label">Interact via PSQL</div>
-                        <div class="step-sub">Enter the container and run SQL queries in real-time.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker exec -it pg16 psql -U admin -d mydb</div>
-                        </div>
-                        <div class="ss-box">
-                            <div class="ss-bar">Postgres Connection</div>
-                            <div class="ss-content">
-                                <span class="hl-purple">mydb=#</span> <span class="hl-green">SELECT version();</span><br>
-                                <span class="hl-blue">PostgreSQL 16.2 on x86_64-pc-linux-gnu...</span>
-                            </div>
-                        </div>
-                        <div class="callout callout-success">
-                            <i class="callout-icon">✅</i>
-                            <div>Postgres is successfully running and accessible!</div>
-                        </div>
-                    </div>
+                <div class="code-block">docker compose version && docker version</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Combined Info</div>
+                <div class="ss-content">
+                  <span class="hl-green">Docker Compose version v2.x.x</span><br>
+                  <span class="hl-blue">Client: Docker Engine - Community</span><br>
+                  <span class="hl-blue">Server: Docker Desktop</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                <div class="step-card">
-                    <div class="step-number">15</div>
-                    <div class="step-content">
-                        <div class="step-label">Useful Lifecycle Commands</div>
-                        <div class="step-sub">Common commands for managing your Postgres instance.</div>
-                        <div class="code-container">
-                            <div class="code-header">
-                                <div class="terminal-dots"><div class="dot" style="background: #ff5f56;"></div><div class="dot" style="background: #ffbd2e;"></div><div class="dot" style="background: #27c93f;"></div></div>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-block">docker stop pg16                        # Stop container
-docker start pg16                       # Restart container
-docker logs pg16                        # View postgres logs
-docker volume ls                        # Confirm persistence volume exists</div>
-                        </div>
-                    </div>
+        <section id="part-3" class="phase-section">
+          <div class="phase-header">
+            <div class="phase-icon" style="background: rgba(51, 103, 145, 0.15); color: var(--postgres-purple);">3</div>
+            <h2 class="phase-title">PostgreSQL 16.2</h2>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">12</div>
+            <div class="step-content">
+              <div class="step-label">Pull Postgres Image</div>
+              <div class="step-sub">Download the official Docker image for Postgres 16.2.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-            </section>
+                <div class="code-block">docker pull postgres:16.2</div>
+              </div>
+            </div>
+          </div>
 
-        </div>
+          <div class="step-card">
+            <div class="step-number">13</div>
+            <div class="step-content">
+              <div class="step-label">Spin up the Container</div>
+              <div class="step-sub">Launch Postgres with persistence, custom creds, and port mapping.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <div class="code-block">docker run -d \
+                  --name pg16 \
+                  -e POSTGRES_USER=admin \
+                  -e POSTGRES_PASSWORD=secret \
+                  -e POSTGRES_DB=mydb \
+                  -p 5432:5432 \
+                  -v pgdata:/var/lib/postgresql/data \
+                  postgres:16.2</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">14</div>
+            <div class="step-content">
+              <div class="step-label">Interact via PSQL</div>
+              <div class="step-sub">Enter the container and run SQL queries in real-time.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <div class="code-block">docker exec -it pg16 psql -U admin -d mydb</div>
+              </div>
+              <div class="ss-box">
+                <div class="ss-bar">Postgres Connection</div>
+                <div class="ss-content">
+                  <span class="hl-purple">mydb=#</span> <span class="hl-green">SELECT version();</span><br>
+                  <span class="hl-blue">PostgreSQL 16.2 on x86_64-pc-linux-gnu...</span>
+                </div>
+              </div>
+              <div class="callout callout-success">
+                <i class="callout-icon">✅</i>
+                <div>Postgres is successfully running and accessible!</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">15</div>
+            <div class="step-content">
+              <div class="step-label">Useful Lifecycle Commands</div>
+              <div class="step-sub">Common commands for managing your Postgres instance.</div>
+              <div class="code-container">
+                <div class="code-header">
+                  <div class="terminal-dots">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div>
+                  </div>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <div class="code-block">docker stop pg16 # Stop container
+                  docker start pg16 # Restart container
+                  docker logs pg16 # View postgres logs
+                  docker volume ls # Confirm persistence volume exists</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer
+          style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-muted); text-align: center; color: var(--text-tertiary); font-size: 13px;">
+          Designed & Enhanced with <span style="color: #ff5f56;">❤</span> by <span style="color: var(--docker-blue); font-weight: 600;">@shubhamparida</span>
+        </footer>
+      </div>
     </main>
-</div>
+  </div>
 
-<script>
+  <script>
     // Copy Code functionality
     function copyCode(btn) {
-        const block = btn.parentElement.nextElementSibling;
-        const text = block.innerText;
-        
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.color = 'var(--success)';
-            btn.style.borderColor = 'var(--success)';
-            
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.color = '';
-                btn.style.borderColor = '';
-            }, 2000);
-        });
+      const block = btn.parentElement.nextElementSibling;
+      const text = block.innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.color = 'var(--success)';
+        btn.style.borderColor = 'var(--success)';
+
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      });
     }
 
     // Scroll progress bar
     window.addEventListener('scroll', () => {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (winScroll / height) * 100;
-        document.getElementById('scroll-progress').style.width = scrolled + '%';
-        
-        // Update active nav link
-        updateActiveNav();
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('scroll-progress').style.width = scrolled + '%';
+
+      // Update active nav link
+      updateActiveNav();
     });
 
     // Navigation active state update
     function updateActiveNav() {
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (pageYOffset >= (sectionTop - 100)) {
-                current = section.getAttribute('id');
-            }
-        });
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-link');
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').substring(1) === current) {
-                link.classList.add('active');
-            }
-        });
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 100)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').substring(1) === current) {
+          link.classList.add('active');
+        }
+      });
     }
-</script>
+  </script>
 
 </body>
+
 </html>
